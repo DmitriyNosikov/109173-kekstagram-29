@@ -1,12 +1,13 @@
+const NOTIF_SHOW_TIMER = 5000;
+const DEBOUNCE_TIMEOUT = 500;
+const THROTTLE_DELAY = 1000;
 const ACCEPTED_FILE_TYPES = ['jpg', 'jpeg', 'png'];
-const NOTIF_CONTAINER_CLASS = 'system-notification';
-const NOTIF_BASE_CLASS = 'system-notification__message';
 const NotifClass = {
+  BASE: 'system-notification__message',
+  CONTAINER: 'system-notification',
   ERROR: 'system-notification__message--error',
   SUCCESS: 'system-notification__message--success'
 };
-const NOTIF_SHOW_TIMER = 5000;
-
 const MessageType = {
   ERROR: 'ERROR',
   SUCCESS: 'SUCCESS'
@@ -15,9 +16,6 @@ const MessageText = {
   ERROR: 'Ошибка загрузки файла',
   SUCCESS: 'Изображение успешно загружено'
 };
-
-const DEBOUNCE_TIMEOUT = 500;
-const THROTTLE_DELAY = 1000;
 
 function isValidFileType(file) {
   if (file) {
@@ -150,21 +148,21 @@ function showSuccess(successText = MessageText.SUCCESS) {
 // Вывод прочих уведомлений пользователям сервиса
 function createNotifContainer() {
   const notifContainer = document.createElement('ul');
-  notifContainer.className = NOTIF_CONTAINER_CLASS;
+  notifContainer.className = NotifClass.CONTAINER;
   return notifContainer;
 }
 
-function showNotification(notifText, notifClass) {
-  if (!document.querySelector(`.${NOTIF_CONTAINER_CLASS}`)) {
+function showNotification(notifText, notifClassName) {
+  if (!document.querySelector(`.${NotifClass.CONTAINER}`)) {
     const notifContainer = createNotifContainer();
     document.body.append(notifContainer);
   }
 
-  const notifocationsContainer = document.querySelector(`.${NOTIF_CONTAINER_CLASS}`);
+  const notifocationsContainer = document.querySelector(`.${NotifClass.CONTAINER}`);
   const notification = document.createElement('li');
   notification.textContent = notifText;
-  notification.classList.add(NOTIF_BASE_CLASS);
-  notification.classList.add(notifClass);
+  notification.classList.add(NotifClass.BASE);
+  notification.classList.add(notifClassName);
 
   notifocationsContainer.prepend(notification);
 
