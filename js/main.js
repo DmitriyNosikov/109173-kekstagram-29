@@ -7,6 +7,7 @@ import './gallery.js';
 // Получаем данные о фотографиях с сервера
 getData()
   .then((photosData) => {
+    console.log('Получили данные от модуля server-api.js', photosData);
     // Инициализируем галерею
     setGalleryData(photosData);
 
@@ -20,5 +21,6 @@ getData()
     renderGallery();
   })
   .catch((error) => {
+    console.log('Ошибка получения данных из модуля server-api.js', error);
     showErrorNotif(error);
   });
