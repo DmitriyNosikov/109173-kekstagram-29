@@ -1,8 +1,12 @@
 import {setGalleryData} from './gallery.js';
 import {getRandUniqElemsFromArr} from './utils.js';
 
-const ACTIVE_BTN_CLASS = 'img-filters__button--active';
 const RANDOM_PHOTOS_COUNT = 10;
+const FilterBtnClass = {
+  BASE: 'img-filters__button',
+  ACTIVE: 'img-filters__button--active',
+  INACTIVE: 'img-filters--inactive',
+};
 const Filter = {
   DEFAULT: 'filter-default',
   RANDOM: 'filter-random',
@@ -12,7 +16,7 @@ const Filter = {
 const imageFiltersContainer = document.querySelector('.img-filters');
 
 function initGalleryFilters(settings) {
-  imageFiltersContainer.classList.remove('img-filters--inactive');
+  imageFiltersContainer.classList.remove(FilterBtnClass.INACTIVE);
 
   imageFiltersContainer.addEventListener('click', (evt) => {
     const target = evt.target;
@@ -33,8 +37,8 @@ function initGalleryFilters(settings) {
 }
 
 function isActiveFilter(target) {
-  if (target.classList.contains(ACTIVE_BTN_CLASS) || // Если кликаем по уже активному фильтру
-    !target.classList.contains('img-filters__button')) { // Если кликаем по самому контейнеру фильтров, а не по кнопкам
+  if (target.classList.contains(FilterBtnClass.ACTIVE) || // Если кликаем по уже активному фильтру
+    !target.classList.contains(FilterBtnClass.BASE)) { // Если кликаем не по кнопкам (например, по контейнеру с кнопками)
     return true;
   }
 
@@ -42,8 +46,8 @@ function isActiveFilter(target) {
 }
 
 function toogleBtnActiveClass(target) {
-  document.querySelector(`.${ACTIVE_BTN_CLASS}`).classList.remove(ACTIVE_BTN_CLASS);
-  target.classList.add(ACTIVE_BTN_CLASS);
+  document.querySelector(`.${FilterBtnClass.ACTIVE}`).classList.remove(FilterBtnClass.ACTIVE);
+  target.classList.add(FilterBtnClass.ACTIVE);
 }
 
 function setFilter(filterID, settings) {

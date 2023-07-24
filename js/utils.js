@@ -1,4 +1,6 @@
 const ACCEPTED_FILE_TYPES = ['jpg', 'jpeg', 'png'];
+
+// Параметры уведомлений
 const NOTIF_CONTAINER_CLASS = 'system-notification';
 const NOTIF_BASE_CLASS = 'system-notification__message';
 const NotifClass = {
@@ -7,6 +9,7 @@ const NotifClass = {
 };
 const NOTIF_SHOW_TIMER = 5000;
 
+// Параметры сообщений
 const MessageType = {
   ERROR: 'ERROR',
   SUCCESS: 'SUCCESS'
@@ -15,7 +18,20 @@ const MessageText = {
   ERROR: 'Ошибка загрузки файла',
   SUCCESS: 'Изображение успешно загружено'
 };
+const MESSAGE_PARAMS = {
+  ERROR: {
+    ID: '#error',
+    CLASS: '.error',
+    TITLE: '.error__title',
+  },
+  SUCCESS: {
+    ID: '#success',
+    CLASS: '.success',
+    TITLE: '.success__title',
+  }
+};
 
+// Параметры задержки
 const DEBOUNCE_TIMEOUT = 500;
 const THROTTLE_DELAY = 1000;
 
@@ -111,25 +127,12 @@ function showMessage(messageText, messageType = MessageType.SUCCESS) {
 }
 
 function createMessage(messageText, messageType = MessageType.SUCCESS) {
-  let templateContainerSelector = null;
-  let messageContainerSelector = null;
-  let messageTitleSelector = null;
+  // Параметры контейнера сообщения
+  const templateContainerSelector = MESSAGE_PARAMS[messageType].ID;
+  const messageContainerSelector = MESSAGE_PARAMS[messageType].CLASS;
+  const messageTitleSelector = MESSAGE_PARAMS[messageType].TITLE;
 
-  switch(messageType) {
-    case MessageType.ERROR: {
-      templateContainerSelector = '#error';
-      messageContainerSelector = '.error';
-      messageTitleSelector = '.error__title';
-      break;
-    }
-    default: {
-      templateContainerSelector = '#success';
-      messageContainerSelector = '.success';
-      messageTitleSelector = '.success__title';
-      break;
-    }
-  }
-
+  // Создаем сообщение
   const messageTmpl = document.querySelector(templateContainerSelector).content;
   const message = messageTmpl.cloneNode(true);
   message.querySelector(messageTitleSelector).textContent = messageText;
@@ -200,8 +203,8 @@ function closeMessageKeyDownHandler(evt) {
 }
 
 function removeMessage() {
-  document.querySelector('.error')?.remove();
-  document.querySelector('.success')?.remove();
+  document.querySelector(MESSAGE_PARAMS.ERROR.CLASS)?.remove();
+  document.querySelector(MESSAGE_PARAMS.SUCCESS.CLASS)?.remove();
 }
 
 // Функции для устранения дребезга

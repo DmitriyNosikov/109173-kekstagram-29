@@ -16,6 +16,24 @@ import {
 import {sendData} from './server-api.js';
 import {isValidFileType, showError, showSuccess} from './utils.js';
 
+// Статусы отправки формы
+const SubmitBtnText = {
+  BASE: 'Опубликовать',
+  PUBLISHING: 'Публикуем...'
+};
+const DataSendStatusText = {
+  SUCCESS: 'Данные успешно отправлены',
+  ERROR: 'Ошибка отправки данных'
+};
+
+// Валидация
+const PrestineClass = {
+  to: 'img-upload__field-wrapper',
+  error: 'img-upload__item--invalid',
+  errorTextParent: 'img-upload__field-wrapper',
+  errorTextTag: 'span',
+  errorText: 'img-upload__error'
+};
 const ValidatorMessage = {
   // Хеш-теги
   HT_SEMANTICS: 'Хэш-теги должны начинаться с символа # и содержать только буквы/цифры',
@@ -25,16 +43,13 @@ const ValidatorMessage = {
   COMM_LENGTH: `Длина комментария не должна превышать ${MAX_COMMENT_LENGTH} символов.`,
 };
 
-const SubmitBtnText = {
-  BASE: 'Опубликовать',
-  PUBLISHING: 'Публикуем...'
-};
-
 const uploadImgForm = document.querySelector('.img-upload__form');
 const uploadImgInput = document.querySelector('.img-upload__input');
 const submitFormBtn = document.querySelector('.img-upload__submit');
 const preview = document.querySelector('.img-upload__preview > img');
 const effectThumbnails = document.querySelectorAll('.effects__preview');
+const hashTagsInput = uploadImgForm.querySelector('.text__hashtags');
+const descriptionInput = uploadImgForm.querySelector('.text__description');
 
 let pristine = null;
 
@@ -62,10 +77,10 @@ function submitFormHandler(event) {
     blockSendBtn();
     sendData(new FormData(targetForm))
       .then(() => {
-        showSuccess('Данные успешно отправлены');
+        showSuccess(DataSendStatusText.SUCCESS);
         closeImgEditor(); // Закрываем форму только в случае успешной отправки
       })
-      .catch(() => showError('Ошибка отправки данных'))
+      .catch(() => showError(DataSendStatusText.ERROR))
       .finally(() => {
         unblockSendBtn();
       });
@@ -84,24 +99,24 @@ function setImagePreview(fileInfo) {
 
 function setFormValidators() {
   pristine = new Pristine(uploadImgForm, {
-    classTo: 'img-upload__field-wrapper',
-    errorClass: 'img-upload__item--invalid',
-    errorTextParent: 'img-upload__field-wrapper',
-    errorTextTag: 'span',
-    errorTextClass: 'img-upload__error'
+    classTo: PrestineClass.to,
+    errorClass: PrestineClass.error,
+    errorTextParent: PrestineClass.errorTextParent,
+    errorTextTag: PrestineClass.errorTextTag,
+    errorTextClass: PrestineClass.errorText
   });
 
   // Валидация хэш-тегов
   pristine.addValidator(
-    uploadImgForm.querySelector('.text__hashtags'),
-    checkTagsSemantics, // Проверка общей сементики
+    hashTagsInput,
+    checkTagsSemantics, // Проверка общей семантики
     ValidatorMessage.HT_SEMANTICS,
     1,
     true
   );
 
   pristine.addValidator(
-    uploadImgForm.querySelector('.text__hashtags'),
+    hashTagsInput,
     checkTagsCount, // Проверка количества тегов
     ValidatorMessage.HT_COUNT,
     2,
@@ -109,7 +124,7 @@ function setFormValidators() {
   );
 
   pristine.addValidator(
-    uploadImgForm.querySelector('.text__hashtags'),
+    hashTagsInput,
     checkTagsUniq, // Проверка на уникальность
     ValidatorMessage.HT_UNIQ,
     3,
@@ -117,11 +132,10 @@ function setFormValidators() {
   );
 
   // Валидатор комментария
-  const test = document.querySelector('.text__description').value.length;
   pristine.addValidator(
-    uploadImgForm.querySelector('.text__description'),
+    descriptionInput,
     checkCommentLength,
-    `${ValidatorMessage.COMM_LENGTH} (${test})`
+    ValidatorMessage.COMM_LENGTH
   );
 }
 
